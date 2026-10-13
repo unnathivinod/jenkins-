@@ -2,6 +2,11 @@ pipeline {
     agent any
 
     stages {
+        stage('Branch Info') {
+            steps {
+                echo "Building branch: ${env.BRANCH_NAME}"
+            }
+        }
         stage('Checkout') {
             steps {
                 checkout scm
@@ -30,6 +35,14 @@ pipeline {
         stage('Docker Run') {
             steps {
                 bat 'docker run --rm jenkins-lab:%BUILD_NUMBER%'
+            }
+        }
+        stage('Deploy') {
+            when {
+                branch 'main'
+            }
+            steps {
+                echo "Deploying ${env.BRANCH_NAME} to production!"
             }
         }
     }
